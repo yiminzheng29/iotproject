@@ -29,7 +29,7 @@ def init_real_time_plot():
     fig_z.update_layout(title_text='Real-Time Z Values')
 
     st.plotly_chart(fig_x, theme=None, use_container_width=True)
-    display(fig_x, fig_y, fig_z)
+   # display(fig_x, fig_y, fig_z)
 
 def send_alert_to_microbit(serial_connection, message):
     """
