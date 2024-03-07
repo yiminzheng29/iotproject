@@ -48,10 +48,7 @@ def main() -> None:
         
 
         # Wait for some time before publishing again, don't spam
-        time.sleep(1)
-
-    # Stop the MQTT client
-    mqttc.loop_stop()
+    mqttc.loop_forever()
 
 
 if __name__== "__main__":
