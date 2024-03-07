@@ -37,7 +37,7 @@ client.on_connect = on_connect
 client.on_message = on_message
 
 # Connect to the MQTT broker (adjust hostname and port as necessary)
-client.connect("broker.mqttdashboard.com", 1883, 60)
+client.connect("broker.mqttdashboard.com")
 
 # Start MQTT client in a background thread
 thread = threading.Thread(target=client.loop_forever)
