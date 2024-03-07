@@ -23,7 +23,7 @@ if 'mqtt_data' not in st.session_state:
 # Callback function for when a connection is established
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
-    client.subscribe("your/topic")
+    client.subscribe("iot/topic/1")
 
 # Callback function for when a message is received
 def on_message(client, userdata, msg):
