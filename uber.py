@@ -56,21 +56,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
 
-    # Loopy loop
-    while True:
-
-        
-        st.write(mqttc.on_message)
-        
-        # Wait for some time before publishing again, don't spam
-        time.sleep(5)
-
-    # Stop the MQTT client
-    mqttc.loop_stop()
-
-
-if __name__== "__main__":
-    main()
 
