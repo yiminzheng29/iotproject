@@ -28,14 +28,19 @@ def main() -> None:
     # Connect to broker
     mqttc.connect("broker.mqttdashboard.com")
 
+
+    mqttc.subscribe("iot/topic/1")
+    
     # Start the MQTT client loop
     mqttc.loop_start()
+
+    
 
     # Loopy loop
     while True:
 
-        client.subscribe("iot/topic/1")
-        st.write(client.on_message)
+        
+        st.write(client.on_messagef)
         
 
         # Wait for some time before publishing again, don't spam
