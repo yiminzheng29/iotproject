@@ -6,6 +6,7 @@ import plotly.graph_objects as go
 #from IPython.display import display
 import paho.mqtt.client as mqtt
 import time
+import threading
 
 
 st.title('Yoga 101')
@@ -16,28 +17,45 @@ if picture:
     st.image(picture)
 
 
-# MQTT client object
-mqttc = None
+# Callback when connecting to the MQTT broker
+def on_connect(client, userdata, flags, rc):
+    print("Connected with result code "+str(rc))
+    # Subscribe to the desired topic
+    client.subscribe("your/topic")
 
+# Callback when receiving a message from the MQTT broker
 def on_message(client, userdata, msg):
-    print(f"Received message: '{msg.payload.decode()}' on topic '{msg.topic}'")
+    message = msg.payload.decode()
+    print(f"Received message: {message} on topic {msg.topic}")
+    # Update Streamlit's session state
+    st.session_state['latest_message'] = message
 
+# Initialize MQTT client and configure callbacks
+client = mqtt.Client()
+client.on_connect = on_connect
+client.on_message = on_message
 
-def main() -> None:
-    global mqttc
+# Connect to the MQTT broker (adjust hostname and port as necessary)
+client.connect("mqtt.eclipse.org", 1883, 60)
 
-    # Create mqtt client
-    mqttc = mqtt.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION1)
+# Start MQTT client in a background thread
+thread = threading.Thread(target=client.loop_forever)
+thread.start()
 
-    # Connect to broker
-    mqttc.connect("broker.mqttdashboard.com")
+# Streamlit app
+def main():
+    # Initialize session state for storing the latest message
+    if 'latest_message' not in st.session_state:
+        st.session_state['latest_message'] = "No message yet."
 
+    # Display the latest message
+    st.title("MQTT Messages")
+    st.write(f"Latest message: {st.session_state['latest_message']}")
 
-    mqttc.subscribe("iot/topic/1")
-    
-    # Start the MQTT client loop
-    mqttc.loop_start()
+    # You could also add a button to clear the message or perform other actions
 
+if __name__ == "__main__":
+    main()
     
 
     # Loopy loop
