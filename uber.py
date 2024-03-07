@@ -26,6 +26,7 @@ def on_connect(client, userdata, flags, rc):
 # Callback when receiving a message from the MQTT broker
 def on_message(client, userdata, msg):
     message = msg.payload.decode()
+    st.write(message)
     print(f"Received message: {message} on topic {msg.topic}")
     # Update Streamlit's session state
     st.session_state['latest_message'] = message
