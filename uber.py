@@ -34,26 +34,12 @@ def main() -> None:
     # Loopy loop
     while True:
 
-        # Data that will be published
-        payload="light:200"
-
-        # Print some debugging info
-        st.write(payload)
-
-        # Publish data to MQTT broker
-        mqttc.publish(topic=TOPIC, payload=payload, qos=0)
+        client.subscribe("iot/topic/1")
+        st.write(client.on_message)
         
-        # throw alert if value below 100
-        val = int(payload.split(":")[-1])
-        if val<100:
-            mqttc.publish(topic=TOPIC_ALERT, payload=PAYLOAD_LOW_ALERT, qos=0)
 
-        # throw alert if value above 500
-        elif val>500:
-            mqttc.publish(topic=TOPIC_ALERT, payload=PAYLOAD_HIGH_ALERT, qos=0)
-            
         # Wait for some time before publishing again, don't spam
-        time.sleep(5)
+        time.sleep(1)
 
     # Stop the MQTT client
     mqttc.loop_stop()
