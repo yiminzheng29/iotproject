@@ -23,36 +23,8 @@ def on_message(client, userdata, msg):
     print(f"Received message: '{msg.payload.decode()}' on topic '{msg.topic}'")
 
 
-def main() -> None:
-    global mqttc
+placeholder = st.empty()
 
-    # Create mqtt client
-    mqttc = mqtt.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION1)
-
-    # Connect to broker
-    mqttc.connect("broker.mqttdashboard.com")
-
-
-    mqttc.subscribe("iot/topic/1")
-    
-    # Start the MQTT client loop
-    mqttc.loop_start()
-
-    
-
-    # Loopy loop
-    while True:
-
-        
-        st.write(mqttc.on_message)
-        
-        # Wait for some time before publishing again, don't spam
-        time.sleep(5)
-
-    # Stop the MQTT client
-    mqttc.loop_stop()
-
-
-if __name__== "__main__":
-    main()
-
+for i in range(10):
+    placeholder.text(f"Update {i+1}")
+    time.sleep(1)  
