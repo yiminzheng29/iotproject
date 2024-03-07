@@ -38,7 +38,7 @@ def main() -> None:
         payload="light:200"
 
         # Print some debugging info
-        print(f"Publish | topic: {TOPIC} | payload: {payload}")
+        st.write(payload)
 
         # Publish data to MQTT broker
         mqttc.publish(topic=TOPIC, payload=payload, qos=0)
