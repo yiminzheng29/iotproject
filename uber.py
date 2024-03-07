@@ -19,6 +19,10 @@ if picture:
 # MQTT client object
 mqttc = None
 
+def on_message(client, userdata, msg):
+    print(f"Received message: '{msg.payload.decode()}' on topic '{msg.topic}'")
+
+
 def main() -> None:
     global mqttc
 
@@ -40,7 +44,7 @@ def main() -> None:
     while True:
 
         
-        st.write(client.on_messagef)
+        st.write(mqttc.on_message)
         
 
         # Wait for some time before publishing again, don't spam
