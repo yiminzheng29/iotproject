@@ -46,9 +46,11 @@ def main() -> None:
         
         st.write(mqttc.on_message)
         
-
         # Wait for some time before publishing again, don't spam
-    mqttc.loop_forever()
+        time.sleep(5)
+
+    # Stop the MQTT client
+    mqttc.loop_stop()
 
 
 if __name__== "__main__":
