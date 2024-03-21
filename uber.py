@@ -88,7 +88,7 @@ BODY_HTML = f"""
 MQ_HOST = "broker.mqttdashboard.com"
 MQ_TOPIC = "iot/topic/yoga1"
 q = queue.Queue()
-st.title("Yoga 101")
+st.title("Yoga Buddy")
 
 
 # The callback for when the client receives a CONNACK response from the server.
@@ -117,10 +117,15 @@ def parsing_to_frontend():
         return body_html_builder
     message = q.get()
 
-    
     # Transform the signature
-    if ":" in message:
+    if message == "Hello MQTT!":
+        body_part = ''
+        pose = None
+        orient = ''
+        status = ''
+    elif ":" in message:
         body_part, status = message.split(":")
+        if status[-8:] =='DETECTED': status = 'DETECTED'
         pose = None
         orient = "left" if "left" in body_part.lower() else "right"
     else:
@@ -129,15 +134,22 @@ def parsing_to_frontend():
             if "ARRIVED" in message
             else message.split("DETECTED")[0]
         )
-        pose = message.split(".")[-1].replace("COMPLETE.", "")
+        pose = message.split(".")[-2].replace("COMPLETE", "").strip()
         orient = None
         status = "COMPLETE"
     # factory to get class html
-    class_html = status.lower().replace("too", "").strip()
+    
+    if status == 'DETECTED':
+        class_html = 'complete'
+    else:
+        class_html = status.lower().replace("too", "").strip()
     # factory to return body_part html to light up according the status
     body_part = body_part.lower()
     st.toast(f"SIGNAL: {body_part=}, {pose=}, {status=}, {orient=}")
     # left_msg, right_msg = "", ""
+
+
+
     if orient == "left":
         left_msg = message
         if "hand" in body_part:
@@ -185,6 +197,14 @@ def parsing_to_frontend():
             left_hands_html = LEFT_HANDS_HTML % ""
             right_hands_html = RIGHT_HANDS_HTML % ""
     elif status == "COMPLETE":
+        print(message)
+        if pose == "POSE 1": 
+            left_msg = "Mountain Pose achieved.\nInhale deeply and extend your body upwards before moving to a Forward Fold."
+            right_msg = ""
+        if pose == "POSE 2": 
+            left_msg = "Forward Fold achieved.\nFeel the stretch in your hamstrings and start to release tension in the back and neck."
+            right_msg = ""
+
         class_html = "complete"
         if "hand" in body_part:
             left_hands_html = LEFT_HANDS_HTML % class_html
@@ -214,6 +234,7 @@ def parsing_to_frontend():
         right_shoulder_html = RIGHT_SHOULDER_HTML % ""
         left_arm_html = LEFT_ARM_HTML % ""
         right_arm_html = RIGHT_ARM_HTML % ""
+    
 
     # body_html builder skeleton
     body_html_builder = f"""
@@ -268,6 +289,7 @@ def main():
     # ff9999 fast - red
     # 334ACD slow - blue
     # 62CE34 complete - green
+    # 62CE34 detected - green
     st.write(
         """<style>.human-body {width: 207px;position: relative;padding-top: 240px;height: 260px;display: block;margin: 40px auto;}.human-body svg:hover {cursor: pointer;}.human-body svg:hover path {fill: #ff7d16;}.human-body svg.fast path{fill:#ff9999;}.human-body svg.slow path{fill:#334ACD;}.human-body svg.complete path{fill:#62CE34;}.human-body svg {position: absolute;left: 50%;fill: #57c9d5;}.human-body svg.head {margin-left: -28.5px;top: -6px;}.human-body svg.shoulder {margin-left: -53.5px;top: 69px;}.human-body svg.left_shoulder {margin-left: -53.5px;top: 69px;}.human-body svg.right_shoulder {margin-left: 10px;top: 69px;}.human-body svg.arm {margin-left: -78px;top: 112px;}.human-body svg.left_arm {margin-left: -78px;top: 112px;}.human-body svg.right_arm {margin-left: 34px;top: 112px;}.human-body svg.cheast {margin-left: -43.5px;top: 88px;}.human-body svg.stomach {margin-left: -37.5px;top: 130px;}.human-body svg.legs {margin-left: -46.5px;top: 205px;z-index: 9999;}.human-body svg.hands {margin-left: -102.5px;top: 224px;}.human-body svg.left_hands {margin-left: -102.5px;top: 224px;}.human-body svg.right_hands {margin-left: 49px;top: 224px;}#area {display: block;width: 100%;clear: both;padding: 10px;text-align: center;font-size: 25px;font-family: Courier New;color: #a5a5a5;}#area #data {color: black;}</style>""",
         unsafe_allow_html=True,
@@ -306,7 +328,7 @@ def main():
             body_image.empty()
             body_image.write(body_html_builder, unsafe_allow_html=True)
             print(f"{body_html_builder=}")
-        time.sleep(0.5)
+        time.sleep(0.1)
 
 
 if __name__ == "__main__":
